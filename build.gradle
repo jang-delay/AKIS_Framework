@@ -5,7 +5,6 @@
  * For more details take a look at the Java Libraries chapter in the Gradle
  * User Manual available at https://docs.gradle.org/5.6.1/userguide/java_library_plugin.html
  */
-
 plugins {
     // Apply the java-library plugin to add support for Java Library
     id 'java-library'
@@ -35,6 +34,7 @@ repositories {
 
 dependencies {
 	compile fileTree (dir: 'src/main/webapp/resources/lib', include: ['**/*.jar'])
+	implementation 'org.projectlombok:lombok'
 }
 test { 
 	useJUnitPlatform() 
