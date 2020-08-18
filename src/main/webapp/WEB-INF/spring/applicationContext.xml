@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc 
+						http://www.springframework.org/schema/jdbc/spring-jdbc-4.3.xsd
+						http://mybatis.org/schema/mybatis-spring 
+						http://mybatis.org/schema/mybatis-spring-1.2.xsd
+						http://www.springframework.org/schema/beans 
+						http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/context 
+						http://www.springframework.org/schema/context/spring-context.xsd
+						http://www.springframework.org/schema/aop 
+						http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+
+	<context:property-placeholder location="classpath:/database.properties"/>
+	
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driverClassName}" />
+		<property name="url" value="${jdbc.url}?useSSL=false&amp;serverTimezone=UTC&amp;characterEncoding=UTF-8" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+	
+	
+	<!-- 콘솔에 쿼리를 출력해주기 위해 입력 -->
+<!-- 	<bean id="dataSource" class="net.sf.log4jdbc.Log4jdbcProxyDataSource"> -->
+<!-- 		<constructor-arg ref="dataSource_main" /> -->
+<!-- 		<property name="logFormatter"> -->
+<!-- 			<bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter"> -->
+<!-- 				<property name="loggingType" value="MULTI_LINE" /> -->
+<!-- 				<property name="sqlPrefix" value="SQL:::"/> -->
+<!-- 			</bean> -->
+<!-- 		</property> -->
+<!-- 	</bean>  -->
+	
+	<!-- Mysql <-> Mybatis를 연결해주는 객체 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<!-- mybatis-config.xml이 스프링 시작될때 같이 실행되도록 설정하기 -->
+		<property name="configLocation" value="classpath:/mybatis-config.xml"></property>
+
+		<!-- XML Mapper 인식하게 설정 -->
+		<property name="mapperLocations" value="classpath:mappers/**/*Mapper.xml"></property>
+	</bean>
+
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg ref="sqlSessionFactory"></constructor-arg>
+	</bean>
+
+	<context:component-scan base-package="org.hello.dao"></context:component-scan>
+
+
+</beans>
